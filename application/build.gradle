@@ -1,0 +1,17 @@
+plugins {
+	id 'org.jetbrains.kotlin.jvm' version '1.6.10'
+	id 'java'
+}
+
+group 'com.KarmaticNeutral'
+version '0.0.1'
+
+dependencies {
+	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+	implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+	api project(':domain')
+}
+
+repositories {
+	mavenCentral()
+}

@@ -1,0 +1,2 @@
+rootProject.name = 'skillTreeV2'
+include "api", "application", "console", "domain", "infrastructure", "web"
