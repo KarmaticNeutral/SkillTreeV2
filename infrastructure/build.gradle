@@ -7,10 +7,13 @@ bootJar	{
 	enabled = false
 }
 
+sourceCompatibility = '17'
+targetCompatibility = '17'
 group 'com.KarmaticNeutral'
 version '0.0.1'
 
 dependencies {
+	implementation 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
