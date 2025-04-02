@@ -1,14 +1,50 @@
 package com.KarmaticNeutral.persistence.entities
 
+import com.KarmaticNeutral.customDataTypes.NonNegativeInt
 import com.KarmaticNeutral.enums.QuestType
 import com.KarmaticNeutral.enums.Rarity
+import com.KarmaticNeutral.persistence.entities.QuestEntity.Companion.FIND_ACTIVE_BY_USER_ID_ASYNC
+import com.KarmaticNeutral.persistence.entities.QuestEntity.Companion.FIND_BY_ID_ASYNC
+import com.KarmaticNeutral.persistence.entities.QuestEntity.Companion.SAVE_ASYNC
+import com.KarmaticNeutral.persistence.entities.QuestEntity.Companion.TABLE_NAME
+import com.KarmaticNeutral.valueObjects.Quest
+import jakarta.persistence.*
 import java.sql.Timestamp
 
-class QuestEntity(
-	id: Long, title: String, description: String, type: QuestType, rarity: Rarity, goldReward: Int, expReward: Int, itemRewards: List<ItemEntity>,
-	createdBy: Long, createdAt: Timestamp, updatedBy: Long, updatedAt: Timestamp, isDeleted: Boolean, deletedBy: Long?, deletedAt: Timestamp?
+@Table(name = TABLE_NAME)
+@NamedQueries(
+	NamedQuery(name = FIND_ACTIVE_BY_USER_ID_ASYNC,
+		query = """
+			SELECT q FROM QuestEntity q 
+			WHERE q.IsDeleted = false 
+			AND q.CreatedBy = :userId
+		"""
+	),
+	NamedQuery(name = FIND_BY_ID_ASYNC,
+		query = """
+			SELECT q FROM QuestEntity q
+			WHERE q.IsDeleted = false
+			AND q.Id = :id
+		"""
+	),
+	NamedQuery(name = SAVE_ASYNC,
+		query = """
+			INSERT INTO QuestEntity q
+		"""
+	)
 )
-	: AuditableTimestampEntity(createdBy, createdAt, updatedBy, updatedAt, isDeleted, deletedBy, deletedAt) {
+class QuestEntity(
+	id: Long, title: String, description: String, type: QuestType, rarity: Rarity, goldReward: Int, expReward: Int, questRewards: List<QuestRewardsEntity>,
+	createdBy: Long, createdAt: Timestamp, updatedBy: Long, updatedAt: Timestamp, isDeleted: Boolean, deletedBy: Long?, deletedAt: Timestamp?
+) : AuditableTimestampEntity(createdBy, createdAt, updatedBy, updatedAt, isDeleted, deletedBy, deletedAt) {
+	companion object {
+		const val TABLE_NAME = "quests"
+		const val FIND_ACTIVE_BY_USER_ID_ASYNC = "QuestEntity.findActiveByUserIdAsync"
+		const val FIND_BY_ID_ASYNC = "QuestEntity.findByIdAsync"
+		const val SAVE_ASYNC = "QuestEntity.saveAsync"
+	}
+
+	@Id
 	private var _id: Long = id
 	var Id: Long
 		get() = _id
@@ -44,8 +80,14 @@ class QuestEntity(
 		get() = _expReward
 		set(value) { _expReward = value }
 
-	private var _itemRewards: List<ItemEntity> = itemRewards
-	var ItemRewards: List<ItemEntity>
-		get() = _itemRewards
-		set(value) { _itemRewards = value }
+	@OneToMany(cascade = [CascadeType.ALL])
+	@JoinColumn(name = "quest_id")
+	private var _questRewards: List<QuestRewardsEntity> = questRewards
+	var QuestRewards: List<QuestRewardsEntity>
+		get() = _questRewards
+		set(value) { _questRewards = value }
+
+	fun toQuest(): Quest {
+		return Quest(Id, Title, Description, Type, Rarity, NonNegativeInt.Companion.of(ExpReward), NonNegativeInt.Companion.of(GoldReward), QuestRewards.map { it.toItem() })
+	}
 }

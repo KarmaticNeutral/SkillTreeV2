@@ -9,12 +9,13 @@ import java.util.concurrent.CompletableFuture
 
 @Repository
 interface SpringQuestRepository: CrudRepository<QuestEntity, Long> {
-	@Async
-	fun save(entity: QuestEntity): CompletableFuture<QuestEntity>
+	//Create/Update
+	@Async fun saveAsync(entity: QuestEntity): CompletableFuture<QuestEntity>
 
-	@Asnyc
-	override fun findById(id: Long): CompletableFuture<Optional<QuestEntity>>
+	//Read
+	@Async fun findByIdAsync(id: Long): CompletableFuture<Optional<QuestEntity>>
+	@Async fun findActiveByUserIdAsync(userId: Long): CompletableFuture<List<QuestEntity>>
 
-	@Async
-	fun findActiveByUserId(userId: Long): CompletableFuture<List<QuestEntity>>
+	//Delete
+	@Async fun deleteAsync(id: Long): CompletableFuture<Void>
 }

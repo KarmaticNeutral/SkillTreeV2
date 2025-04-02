@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture
 @Service
 interface QuestRepository {
 	fun getActiveForUser(userId: Long): CompletableFuture<List<Quest>>
-	fun get(id: Long): CompletableFuture<Quest>
-	fun save(quest: Quest, userId: Long): CompletableFuture<Long>
+	fun find(id: Long): CompletableFuture<Quest>
+	fun saveAsync(quest: Quest, userId: Long): CompletableFuture<Long>
+	fun deleteAsync(entity: Quest): CompletableFuture<Void>
 }

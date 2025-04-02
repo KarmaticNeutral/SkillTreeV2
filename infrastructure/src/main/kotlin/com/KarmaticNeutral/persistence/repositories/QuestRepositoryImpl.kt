@@ -12,7 +12,7 @@ import java.util.concurrent.CompletableFuture
 @Service
 class QuestRepositoryImpl(private val springQuestRepository: SpringQuestRepository) : QuestRepository {
 	override fun getActiveForUser(userId: Long): CompletableFuture<List<Quest>> {
-		return springQuestRepository.findById(userId).handleAsync { entities, ex ->
+		return springQuestRepository.findActiveByUserIdAsync(userId).handleAsync { entities, ex ->
 			if (ex != null) {
 				throw ex
 			} else {
@@ -21,13 +21,13 @@ class QuestRepositoryImpl(private val springQuestRepository: SpringQuestReposito
 		}
 	}
 
-	override fun get(id: Long): CompletableFuture<Quest> {
-		val t = ItemEntity(1, "item", 1f, 1f, "rarity", 1, Timestamp(1), 1 , Timestamp(1), false, null, null)
+	override fun find(id: Long): CompletableFuture<Quest> {
+		val t = ItemEntity(1, "item", "An item!",1f, 1f, "rarity", 1, Timestamp(1), 1 , Timestamp(1), false, null, null)
 		t.Rarity = "Common"
 		TODO("Not yet implemented")
 	}
 
-	override fun save(quest: Quest, userId: Long): CompletableFuture<Long> {
+	override fun saveAsync(quest: Quest, userId: Long): CompletableFuture<Long> {
 		val questEntity = QuestEntity(
 			quest.getId(),
 			quest.getName(),
@@ -45,12 +45,16 @@ class QuestRepositoryImpl(private val springQuestRepository: SpringQuestReposito
 			null,
 			null
 		)
-		return springQuestRepository.save(questEntity).handleAsync { entity, ex ->
+		return springQuestRepository.saveAsync(questEntity).handleAsync { entity, ex ->
 			if (ex != null) {
 				throw ex
 			} else {
 				entity.Id
 			}
 		}
+	}
+
+	override fun deleteAsync(entity: Quest): CompletableFuture<Void> {
+		return springQuestRepository.deleteAsync(entity.getId())
 	}
 }

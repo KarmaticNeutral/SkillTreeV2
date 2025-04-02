@@ -12,6 +12,6 @@ class CreateQuestRequest(val userId: Long, val quest: Quest): AbstractRequest<Co
 @Service
 class CreateQuestHandler(private val questRepository: QuestRepository) : AbstractHandler<CreateQuestRequest, CompletableFuture<Long>>() {
 	override fun handle(request: CreateQuestRequest): CompletableFuture<Long> {
-		return questRepository.save(request.quest, request.userId)
+		return questRepository.saveAsync(request.quest, request.userId)
 	}
 }

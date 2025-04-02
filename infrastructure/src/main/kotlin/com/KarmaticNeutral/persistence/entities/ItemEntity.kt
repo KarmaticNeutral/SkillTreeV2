@@ -1,8 +1,9 @@
 package com.KarmaticNeutral.persistence.entities
 
+import com.KarmaticNeutral.valueObjects.Item
 import java.sql.Timestamp
 
-class ItemEntity(id: Long, name: String, weight: Float, value: Float, rarity: String,
+class ItemEntity(id: Long, name: String, description: String, weight: Float, value: Float, rarity: String,
 				 createdBy: Long, createdAt: Timestamp, updatedBy: Long, updatedAt: Timestamp, isDeleted: Boolean, deletedBy: Long?, deletedAt: Timestamp?)
 	: AuditableTimestampEntity(createdBy, createdAt, updatedBy, updatedAt, isDeleted, deletedBy, deletedAt) {
 	private var _id: Long = id
@@ -14,6 +15,11 @@ class ItemEntity(id: Long, name: String, weight: Float, value: Float, rarity: St
 	var Name: String
 		get() = _name
 		set(value) { _name = value }
+
+	private var _description: String = description
+	var Description: String
+		get() = _description
+		set(value) { _description = value }
 
 	private var _weight: Float = weight
 	var Weight: Float
@@ -29,4 +35,8 @@ class ItemEntity(id: Long, name: String, weight: Float, value: Float, rarity: St
 	var Rarity: String
 		get() = _rarity
 		set(value) { _rarity = value }
+
+	fun toItem(): Item {
+		return Item(Id, Name, Description)
+	}
 }
