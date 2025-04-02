@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture
 
 @Service
 class QuestRepositoryImpl(private val springQuestRepository: SpringQuestRepository) : QuestRepository {
-	override fun getActiveForUser(userId: Long): CompletableFuture<List<Quest>> {
+	override fun getActiveForUserAsync(userId: Long): CompletableFuture<List<Quest>> {
 		return springQuestRepository.findActiveByUserIdAsync(userId).handleAsync { entities, ex ->
 			if (ex != null) {
 				throw ex
@@ -21,7 +21,7 @@ class QuestRepositoryImpl(private val springQuestRepository: SpringQuestReposito
 		}
 	}
 
-	override fun find(id: Long): CompletableFuture<Quest> {
+	override fun findAsync(id: Long): CompletableFuture<Quest> {
 		val t = ItemEntity(1, "item", "An item!",1f, 1f, "rarity", 1, Timestamp(1), 1 , Timestamp(1), false, null, null)
 		t.Rarity = "Common"
 		TODO("Not yet implemented")
